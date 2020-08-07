@@ -442,7 +442,7 @@ static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *
           io_cfg->bus_width == MMCSD_BUS_WIDTH_1 ? "1" : "",
           io_cfg->power_mode == MMCSD_POWER_OFF ? "OFF" : "",
           io_cfg->power_mode == MMCSD_POWER_UP ? "UP" : "",
-          io_cfg->power_mode == MMCSD_power_en(1) ? "ON" : ""
+          io_cfg->power_mode == MMCSD_POWER_ON ? "ON" : ""
          );
 
     RTHW_SDIO_LOCK(sdio);
@@ -489,8 +489,8 @@ static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *
     case MMCSD_POWER_UP:
         hw_sdio->power = HW_SDIO_POWER_UP;
         break;
-    case MMCSD_power_en(1):
-        hw_sdio->power = HW_SDIO_power_en(1);
+    case MMCSD_POWER_ON:
+        hw_sdio->power = HW_SDIO_POWER_ON;
         break;
     default:
         LOG_W("unknown power_mode %d", io_cfg->power_mode);

@@ -1,0 +1,12 @@
+diff a/bsp/stm32/libraries/HAL_Drivers/drv_sdio.c b/bsp/stm32/libraries/HAL_Drivers/drv_sdio.c	(rejected hunks)
+@@ -489,8 +489,8 @@
+     case MMCSD_POWER_UP:
+         hw_sdio->power = HW_SDIO_POWER_UP;
+         break;
+-    case MMCSD_POWER_ON:
+-        hw_sdio->power = HW_SDIO_POWER_ON;
++    case MMCSD_power_en(1):
++        hw_sdio->power = HW_SDIO_power_en(1);
+         break;
+     default:
+         LOG_W("unknown power_mode %d", io_cfg->power_mode);
