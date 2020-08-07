@@ -38,7 +38,7 @@ struct rt_mmcsd_io_cfg {
 
 #define MMCSD_POWER_OFF		0
 #define MMCSD_POWER_UP		1
-#define MMCSD_POWER_ON		2
+#define MMCSD_power_en(1)		2
 
 	rt_uint8_t	bus_width;		/* data bus width */
 

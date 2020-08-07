@@ -145,7 +145,7 @@ extern "C" {
 #define EXT_CSD_RST_N_ENABLED	        1	/* RST_n is enabled on card */
 
 #define EXT_CSD_NO_POWER_NOTIFICATION	0
-#define EXT_CSD_POWER_ON		1
+#define EXT_CSD_power_en(1)		1
 #define EXT_CSD_POWER_OFF_SHORT		2
 #define EXT_CSD_POWER_OFF_LONG		3
 

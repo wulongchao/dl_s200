@@ -1,3 +1,4 @@
+#define LOG_TAG "Nand"
 #include "../mtd/nand.h"
 
 //#include "malloc.h"
@@ -233,11 +234,12 @@ u8 NAND_Reset(void)
 //   1,等待RB==1
 //返回值:0,成功
 //       1,超时
+//u32 maxtesttime;
 u8 NAND_WaitRB(vu8 rb)
 { u32 timeout;
     vu32 time=0;  
     if(0==rb)
-        timeout=0x1FFFFF;
+        timeout=0xff;
 
     else
         timeout=0X1FFFFF;
@@ -246,15 +248,24 @@ u8 NAND_WaitRB(vu8 rb)
 		time++;
 		if(NAND_RB==rb)
 		{
-		    //LOG_I("time%d",timeout);
+
+		/*    if (maxtesttime<time) {
+
+                LOG_I("time%x rb:%x",time,rb);
+                maxtesttime= MAX(maxtesttime,time);
+            }*/
+
 		    return 0;
 
 	    }
 	}
 	if(1==rb)
-	    rt_kprintf("WaitRB 1 timeout");
+	    LOG_I("WaitRB==1 timeout");
 	if(0==rb)
-	        rt_kprintf("WaitRB 0 timeout");
+	{
+//	    LOG_I("WaitRB==0 timeout");
+	}
+
 	return 1;
 }
 

@@ -83,7 +83,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
         return -RT_ERROR;
     }
 
-    LOG_D("set rtc time.");
+    LOG_E("set rtc time.");
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
     return RT_EOK;
 }
@@ -238,28 +238,71 @@ static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint
 
 
 }
+char* time_month_str[12]=
+{
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
 
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+
+        "Nov",
+        "Dec",
+};
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-  volatile  u32 daback;
+  volatile  u32 daback=0;
     result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
         return result;
     }
-  //  HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
+  //函数  set_rtc_time_stamp中 调用
+    //HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
     daback=HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1);
     if (daback!= BKUP_REG_DATA)
-       {    //__DATE_
+       {char str[16]= {NULL};
+        char* buf[6];
+        u8 i;
              uint16_t year = 2020;
-             uint8_t month = 1, day = 2, hour = 12, min = 0, sec = 0;
+             u8 month = 1,day = 2,  hour = 12, min = 0, sec = 0;
+
+
+             strcpy(str,__DATE__)  ;
+                buf[0] = strtok(str," ");
+                buf[1] = strtok(0," ");
+                buf[2] = strtok(0," ");
+            strcpy(str,__TIME__)  ;
+                buf[3] = strtok(str,":");
+                buf[4] = strtok(0,":");
+                buf[5] = strtok(0,":");
+            for (i = 0; i < 12; ++i) {
+                if (memcmp(buf[0],time_month_str[i],strlen(buf[0]))==0) {
+                    month=i+1;
+                    break;
+                }
+            }
+            day=atoi(buf[1]);
+            year=atoi(buf[2]);
+            hour = atoi(buf[3]); min =atoi(buf[4]); sec =atoi(buf[5]);
+               // LOG_I("%s,%s,%s",buf[0],buf[1],buf[2]);
              set_time(hour, min, sec);
              set_date(year, month, day);
-
-
+             daback=HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1);
+             LOG_I("BKUPRead:%x",daback);
      }
+    {
+
+
+    }
     LOG_D("rtc init success");
     return RT_EOK;
 }

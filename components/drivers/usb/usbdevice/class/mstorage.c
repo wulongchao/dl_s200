@@ -158,8 +158,8 @@ ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
-    "RT-Thread Team.",
-    "RTT Mass Storage",
+    "DIAN LIANG Team.",
+    "I Test Box Mass Storage",
     "320219198301",
     "Configuration",
     "Interface",
@@ -266,8 +266,8 @@ static rt_size_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw)
     *(rt_uint32_t*)&buf[4] = 31;
 
     rt_memset(&buf[8], 0x20, 28);
-    rt_memcpy(&buf[8], "RTT", 3);
-    rt_memcpy(&buf[16], "USB Disk", 8);
+    rt_memcpy(&buf[8], "I  ", 3);
+    rt_memcpy(&buf[16], "Test Box", 8);
 
     data->cb_data_size = MIN(data->cb_data_size, SIZEOF_INQUIRY_CMD);
     data->ep_in->request.buffer = buf;

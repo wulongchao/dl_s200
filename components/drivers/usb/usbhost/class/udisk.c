@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2011-12-12     Yi Qiu      first version
  */
-
+#define LOG_TAG "udisk.c"
 #include <rtthread.h>
 #include <dfs_fs.h>
 #include <drivers/usb_host.h>
@@ -148,6 +148,13 @@ static rt_err_t rt_udisk_control(rt_device_t dev, int cmd, void *args)
 
     data = (struct ustor_data*)dev->user_data;
     //while(1);  //inf=232323
+
+    if (((u32)((ustor_t)data->intf)>(u32)0x20020000)||
+            ((u32)((ustor_t)data->intf)<(u32)0x10000000))
+            {
+        LOG_E("data->intf:%x",(ustor_t)data->intf);
+        return RT_ERROR;
+    }
     stor = (ustor_t)data->intf->user_data;
 
     if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
@@ -401,6 +408,10 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
                 }
                 else
                 {
+                    usbdisk_cannot_mount_flag=1;
+                    ECP5_status.err_flag|=err_usbdisk_cannot_mount;
+                    led_name_b_r_onoff(1, "¿ª¹Ø", 0, 1); //¿ØµÆ×´Ì¬
+                    power_vbs_en(0);
                     rt_kprintf("Mount FAT on Udisk failed.\n");
                 }
             }

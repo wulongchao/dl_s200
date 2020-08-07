@@ -566,7 +566,7 @@ static void mmcsd_power_up(struct rt_mmcsd_host *host)
     mmcsd_delay_ms(10);
 
     host->io_cfg.clock = host->freq_min;
-    host->io_cfg.power_mode = MMCSD_POWER_ON;
+    host->io_cfg.power_mode = MMCSD_power_en(1);
     mmcsd_set_iocfg(host);
 
     /*

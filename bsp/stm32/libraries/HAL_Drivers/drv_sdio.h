@@ -90,7 +90,7 @@
 
 #define HW_SDIO_POWER_OFF                      (0x00U)
 #define HW_SDIO_POWER_UP                       (0x02U)
-#define HW_SDIO_POWER_ON                       (0x03U)
+#define HW_SDIO_power_en(1)                       (0x03U)
 
 #define HW_SDIO_FLOW_ENABLE                    (0x01U << 14)
 #define HW_SDIO_BUSWIDE_1B                     (0x00U << 11)

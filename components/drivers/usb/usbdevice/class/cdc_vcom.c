@@ -243,8 +243,8 @@ ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
-    "RT-Thread Team.",
-    "RTT Virtual Serial",
+    "DIAN LIANG Team.",
+    "I Test Box Virtual Serial",
     serno,
     "Configuration",
     "Interface",
