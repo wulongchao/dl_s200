@@ -154,7 +154,7 @@ rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 
     configuration.channel = channel;
     result = rt_device_control(&device->parent, PWM_CMD_DISABLE, &configuration);
-    rt_kprintf("pwm disable!\n");
+//    rt_kprintf("pwm disable!\n");
     return result;
 }
 
@@ -207,7 +207,7 @@ static int pwm_enable(int argc, char **argv)
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_enable, pwm_enable pwm1 1);
+//MSH_CMD_EXPORT(pwm_enable, pwm_enable pwm1 1);
 
 static int pwm_disable(int argc, char **argv)
 {
@@ -233,7 +233,7 @@ static int pwm_disable(int argc, char **argv)
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_disable, pwm_disable pwm1 1);
+//MSH_CMD_EXPORT(pwm_disable, pwm_disable pwm1 1);
 
 static int pwm_set(int argc, char **argv)
 {
@@ -259,7 +259,7 @@ static int pwm_set(int argc, char **argv)
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_set, pwm_set pwm1 1 100 50);
+//MSH_CMD_EXPORT(pwm_set, pwm_set pwm1 1 100 50);
 
 #endif /* FINSH_USING_MSH */
 #endif /* RT_USING_FINSH */

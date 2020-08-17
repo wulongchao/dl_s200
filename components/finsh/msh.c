@@ -391,7 +391,7 @@ int msh_exec(char *cmd, rt_size_t length)
      * 1. built-in command
      * 2. module(if enabled)
      */
-//    msh_execi2c(cmd, &length);
+    msh_execi2c(cmd, &length);
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
         return cmd_ret;

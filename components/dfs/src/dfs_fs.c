@@ -554,7 +554,8 @@ int dfs_mount_table(void)
     }
     return 0;
 }
-MSH_CMD_EXPORT(dfs_mount_table, dfs_mount_table init);
+
+
 //INIT_ENV_EXPORT(dfs_mount_table);
 //INIT_APP_EXPORT(dfs_mount_table);
 int dfs_mount_device(rt_device_t dev)

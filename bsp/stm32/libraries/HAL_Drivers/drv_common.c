@@ -108,12 +108,13 @@ void rt_hw_us_delay(rt_uint32_t us)
         delta = start > now ? start - now : reload + start - now;
     } while(delta < us_tick * us);
 }
-
+static struct rt_memheap system_ram_heap;
 /**
  * This function will initial STM32 board.
  */
 RT_WEAK void rt_hw_board_init()
 {
+
 #ifdef SCB_EnableICache
     /* Enable I-Cache---------------------------------------------------------*/
     SCB_EnableICache();
@@ -138,7 +139,10 @@ RT_WEAK void rt_hw_board_init()
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)
+    rt_memheap_init(&system_ram_heap, "ram0", (void *)0x10000000, 64*1024);
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+
+
 #endif
 
     /* Pin driver initialization is open by default */

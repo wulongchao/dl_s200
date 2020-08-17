@@ -63,9 +63,10 @@ u8 FTL_Init(void)
         }
     }else 	//创建LUT表成功
 	{
-		printf("total block num:%d\r\n",nand_dev.block_totalnum);
-		printf("good block num:%d\r\n",nand_dev.good_blocknum);
-		printf("valid block num:%d\r\n",nand_dev.valid_blocknum);
+
+        rt_kprintf("total block num:%d\r\n",nand_dev.block_totalnum);
+        rt_kprintf("good block num:%d\r\n",nand_dev.good_blocknum);
+        rt_kprintf("valid block num:%d\r\n",nand_dev.valid_blocknum);
     }
 	return 0;
 } 
@@ -170,7 +171,7 @@ u8 FTL_EraseBlock(u32 LBNNo_,u32 BlockNum)
                            {
                                LBNnum=((u16)buf[3]<<8)+buf[2];     //得到逻辑块编号
                               if (LBNNo==LBNnum) {
-                                  LOG_I("erase LBNNo:%d PBNNo:%d",LBNNo,PBNNo);
+                                 // LOG_I("erase LBNNo:%d PBNNo:%d",LBNNo,PBNNo);
                               }else {
                                   LOG_E("erase then write LNUM%d err ",LBNnum);
                               }

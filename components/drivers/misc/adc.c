@@ -230,6 +230,6 @@ static int adc(int argc, char **argv)
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc function);
+//MSH_CMD_EXPORT(adc, adc function);
 
 #endif /* FINSH_USING_MSH */

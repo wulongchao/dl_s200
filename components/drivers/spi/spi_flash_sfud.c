@@ -792,7 +792,7 @@ static void sf(uint8_t argc, char **argv) {
         }
     }
 }
-MSH_CMD_EXPORT(sf, SPI Flash operate.);
+//MSH_CMD_EXPORT(sf, SPI Flash operate.);
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 
 #endif /* RT_USING_SFUD */

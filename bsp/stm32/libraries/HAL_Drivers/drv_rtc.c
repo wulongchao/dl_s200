@@ -255,6 +255,35 @@ char* time_month_str[12]=
         "Nov",
         "Dec",
 };
+void convert_time(char *str,uint16_t* year,u16 *month,u16* day, u16* hour, u16* min ,u16* sec )
+{
+            char* buf[6];
+             u8 i;
+              char str1[16]= {0};
+                  buf[0] = strtok(str," ");
+                  buf[1] = strtok(0," ");
+                  buf[2] = strtok(0," ");
+              strcpy(str1,__TIME__);
+                  buf[3] = strtok(str1,":");
+                  buf[4] = strtok(0,":");
+                  buf[5] = strtok(0,":");
+              for (i = 0; i < 12; ++i) {
+                  if (memcmp(buf[0],time_month_str[i],strlen(buf[0]))==0) {
+                      *month=i+1;
+                      break;
+                  }
+              }
+              *day=atoi(buf[1]);
+              *year=atoi(buf[2]);
+              *hour = atoi(buf[3]);
+              *min =atoi(buf[4]);
+              *sec =atoi(buf[5]);
+}
+
+
+
+//函数  set_rtc_time_stamp中 调用
+    //HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
@@ -265,39 +294,24 @@ int rt_hw_rtc_init(void)
         LOG_E("rtc register err code: %d", result);
         return result;
     }
-  //函数  set_rtc_time_stamp中 调用
-    //HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
+
+
     daback=HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1);
-    if (daback!= BKUP_REG_DATA)
-       {char str[16]= {NULL};
-        char* buf[6];
-        u8 i;
+    if(daback!= BKUP_REG_DATA)
+       {    char str[16]= {0};
+            char str1[16]= {0};
+            char* buf[6];
+
              uint16_t year = 2020;
-             u8 month = 1,day = 2,  hour = 12, min = 0, sec = 0;
-
-
+             u16 month = 1,day = 2,  hour = 12, min = 0, sec = 0;
              strcpy(str,__DATE__)  ;
-                buf[0] = strtok(str," ");
-                buf[1] = strtok(0," ");
-                buf[2] = strtok(0," ");
-            strcpy(str,__TIME__)  ;
-                buf[3] = strtok(str,":");
-                buf[4] = strtok(0,":");
-                buf[5] = strtok(0,":");
-            for (i = 0; i < 12; ++i) {
-                if (memcmp(buf[0],time_month_str[i],strlen(buf[0]))==0) {
-                    month=i+1;
-                    break;
-                }
-            }
-            day=atoi(buf[1]);
-            year=atoi(buf[2]);
-            hour = atoi(buf[3]); min =atoi(buf[4]); sec =atoi(buf[5]);
+
+             convert_time(str,&year, &month,&day,  &hour, &min, &sec);
                // LOG_I("%s,%s,%s",buf[0],buf[1],buf[2]);
              set_time(hour, min, sec);
              set_date(year, month, day);
              daback=HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1);
-             LOG_I("BKUPRead:%x",daback);
+             LOG_E("BKUPRead:%x",daback);
      }
     {
 

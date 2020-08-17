@@ -979,7 +979,7 @@ static void ulog_tag_lvl(uint8_t argc, char **argv)
 #endif /* ULOG_USING_SYSLOG */
     }
 }
-MSH_CMD_EXPORT(ulog_tag_lvl, Set ulog filter level by different tag.);
+//MSH_CMD_EXPORT(ulog_tag_lvl, Set ulog filter level by different tag.);
 
 static void ulog_lvl(uint8_t argc, char **argv)
 {
@@ -1015,7 +1015,7 @@ static void ulog_lvl(uint8_t argc, char **argv)
 #endif /* ULOG_USING_SYSLOG */
     }
 }
-MSH_CMD_EXPORT(ulog_lvl, Set ulog global filter level.);
+//MSH_CMD_EXPORT(ulog_lvl, Set ulog global filter level.);
 
 static void ulog_tag(uint8_t argc, char **argv)
 {
@@ -1035,7 +1035,7 @@ static void ulog_tag(uint8_t argc, char **argv)
         ulog_global_filter_tag_set("");
     }
 }
-MSH_CMD_EXPORT(ulog_tag, Set ulog global filter tag);
+//MSH_CMD_EXPORT(ulog_tag, Set ulog global filter tag);
 
 static void ulog_kw(uint8_t argc, char **argv)
 {
@@ -1055,7 +1055,7 @@ static void ulog_kw(uint8_t argc, char **argv)
         ulog_global_filter_kw_set("");
     }
 }
-MSH_CMD_EXPORT(ulog_kw, Set ulog global filter keyword);
+//MSH_CMD_EXPORT(ulog_kw, Set ulog global filter keyword);
 
 static void ulog_filter(uint8_t argc, char **argv)
 {
@@ -1105,7 +1105,7 @@ static void ulog_filter(uint8_t argc, char **argv)
         output_unlock();
     }
 }
-MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
+//MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 #endif /* ULOG_USING_FILTER */
 

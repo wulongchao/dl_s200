@@ -491,7 +491,14 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     return ptr;
 }
 RTM_EXPORT(rt_memheap_realloc);
+void check_memheap_free(void *ptr)
+{
+    struct rt_memheap_item *header_ptr;
+    header_ptr    = (struct rt_memheap_item *)
+                    ((rt_uint8_t *)ptr - RT_MEMHEAP_SIZE);
+   rt_kprintf("header_ptr->next->magic=%x",header_ptr->next->magic & RT_MEMHEAP_MASK);
 
+}
 void rt_memheap_free(void *ptr)
 {
     rt_err_t result;

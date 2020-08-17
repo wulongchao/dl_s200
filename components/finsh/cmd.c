@@ -257,8 +257,9 @@ long list_thread(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(list_thread, list thread);
-
+#endif
 static void show_wait_queue(struct rt_list_node *list)
 {
     struct rt_thread *thread;
@@ -461,7 +462,7 @@ long list_mutex(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
-MSH_CMD_EXPORT(list_mutex, list mutex in system);
+//MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -532,7 +533,7 @@ long list_mailbox(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
-MSH_CMD_EXPORT(list_mailbox, list mail box in system);
+//MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -599,7 +600,7 @@ long list_msgqueue(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
-MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
+//MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -656,7 +657,7 @@ long list_memheap(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
-MSH_CMD_EXPORT(list_memheap, list memory heap in system);
+//MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
 #ifdef RT_USING_MEMPOOL
@@ -736,7 +737,7 @@ long list_mempool(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
-MSH_CMD_EXPORT(list_mempool, list memory pool in system);
+//MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
 long list_timer(void)
@@ -795,7 +796,7 @@ long list_timer(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
-MSH_CMD_EXPORT(list_timer, list timer in system);
+//MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
 static char *const device_type_str[] =
