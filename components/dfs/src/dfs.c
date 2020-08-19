@@ -559,7 +559,9 @@ int list_fd(void)
 
     return 0;
 }
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(list_fd, list file descriptor);
+#endif
 #endif
 /*@}*/
 

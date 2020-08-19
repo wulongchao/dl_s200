@@ -416,7 +416,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         }
         
         if(reconnect)
-        {            
+        {
             if(hub->child[i] != RT_NULL && hub->child[i]->status != DEV_STATUS_IDLE) 
                 rt_usbh_detach_instance(hub->child[i]);
             
@@ -436,9 +436,14 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
 
             /* reset usb roothub port */
             rt_usbh_hub_reset_port(hub, i + 1);
-            
+
             /* attatch the usb instance to the hcd */
-            rt_usbh_attatch_instance(device); 
+            if(rt_usbh_attatch_instance(device)!= RT_EOK)
+            {
+                rt_kprintf("renumerate usbh\r\n");
+                rt_usbh_attatch_instance(device);
+            }
+//            rt_usbh_attatch_instance(device);
         }
     }
 

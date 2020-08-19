@@ -10,7 +10,7 @@ config FINSH_THREAD_NAME
     string "The finsh thread name"
     default "tshell"
 config SHELL_TEST
-    bool "¡–≥ˆshell≤‚ ‘√¸¡Ó"
+    bool "Enable test command"
     default n
     
 config FINSH_USING_HISTORY

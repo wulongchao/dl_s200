@@ -67,7 +67,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
 
 int msh_help(int argc, char **argv)
 {
-    rt_kprintf(" shell commands:\n");
+    rt_kprintf("shell commands:\n");
     {
         struct finsh_syscall *index;
 
@@ -102,8 +102,9 @@ int cmd_ps(int argc, char **argv)
         list_thread();
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
-
+#endif
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
 {
@@ -117,7 +118,9 @@ int cmd_free(int argc, char **argv)
 #endif
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
 #endif
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])

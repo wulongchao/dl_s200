@@ -505,7 +505,8 @@ O_TRUNC 如果文件已经存在，则清空文件中的内容
 const struct dfs_mount_tbl mount_table[] =
                 {   //filesystemW25Q1282
                     {RT_USB_MSTORAGE_DISK_NAME,U_MOUNTPOINT , "elm", O_RDWR, 0},//  只能初始化为/"/ud0"
-                 //       { "nand0_data",U_MOUNTPOINT , "elm", O_RDWR, 0},
+                    {RT_USB_MSTORAGE_DISK_NAME_2,U_MOUNTPOINT1 , "elm", O_RDWR, 0},
+                    //       { "nand0_data",U_MOUNTPOINT , "elm", O_RDWR, 0},
                    //  {"ud0-0", "/", "elm", 0, 0},
                     {0}
                 };
@@ -518,6 +519,7 @@ int dfs_mount_table(void)
     {
         if (mount_table[index].path == NULL) break;
 
+        //dfs_unmount(mount_table[index].path);
         if (dfs_mount(mount_table[index].device_name,
                       mount_table[index].path,
                       mount_table[index].filesystemtype,
@@ -682,7 +684,9 @@ int df(const char *path)
                (unsigned long)cap, minor, unit_str[unit_index], buffer.f_bfree, buffer.f_bsize);
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT(df, get disk free);
+#endif
 #endif
 
 /* @} */

@@ -752,6 +752,7 @@ static const char *_get_path_lastname(const char *path)
     /* skip the '/' then return */
     return ++ptr;
 }
+char dfs_file_copy_err=0;
 void copy(const char *src, const char *dst)
 {
 #define FLAG_SRC_TYPE      0x03
@@ -766,10 +767,11 @@ void copy(const char *src, const char *dst)
 
     struct stat stat;
     uint32_t flag = 0;
-
+    dfs_file_copy_err=RT_ERROR;
     /* check the staus of src and dst */
     if (dfs_file_stat(src, &stat) < 0)
     {
+
         rt_kprintf("copy failed, bad %s\n", src);
         return;
     }
@@ -842,6 +844,7 @@ void copy(const char *src, const char *dst)
             copydir(src, dst);
         }
     }
+    dfs_file_copy_err=RT_EOK;
 }
 FINSH_FUNCTION_EXPORT(copy, copy file or dir)
 

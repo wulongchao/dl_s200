@@ -339,7 +339,9 @@ long list_sem(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(list_sem, list semaphore in system);
+#endif
 #endif
 
 #ifdef RT_USING_EVENT
@@ -404,7 +406,9 @@ long list_event(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_event, list event in system);
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(list_event, list event in system);
+#endif
 #endif
 
 #ifdef RT_USING_MUTEX
@@ -878,7 +882,9 @@ long list_device(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_device, list device in system);
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(list_device, list device in system);
+#endif
 #endif
 
 long list(void)

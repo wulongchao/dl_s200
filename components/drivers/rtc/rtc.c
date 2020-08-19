@@ -246,7 +246,10 @@ static void date(uint8_t argc, char **argv)
         rt_kprintf("e.g: date 2018 01 01 23 59 59 or date\n");
     }
 }
+
+#ifdef SHELL_TEST
 MSH_CMD_EXPORT(date, get date and time or set [year month day hour min sec]);
+#endif
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 
 #endif /* RT_USING_FINSH */

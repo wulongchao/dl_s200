@@ -160,8 +160,9 @@ int cmd_ls(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, List information about the FILEs.);
-
+#endif
 int cmd_cp(int argc, char **argv)
 {
     void copy(const char *src, const char *dst);
@@ -178,8 +179,9 @@ int cmd_cp(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cp, __cmd_cp, Copy SOURCE to DEST.);
-
+#endif
 int cmd_mv(int argc, char **argv)
 {
     if (argc != 3)
@@ -237,8 +239,9 @@ int cmd_mv(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, Rename SOURCE to DEST.);
-
+#endif
 int cmd_cat(int argc, char **argv)
 {
     int index;
@@ -258,8 +261,9 @@ int cmd_cat(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, Concatenate FILE(s));
-
+#endif
 int cmd_rm(int argc, char **argv)
 {
     int index;
@@ -278,8 +282,9 @@ int cmd_rm(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove(unlink) the FILE(s).);
-
+#endif
 #ifdef DFS_USING_WORKDIR
 int cmd_cd(int argc, char **argv)
 {
@@ -321,8 +326,9 @@ int cmd_mkdir(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
-
+#endif
 int cmd_mkfs(int argc, char **argv)
 {
     int result = 0;
@@ -353,8 +359,9 @@ int cmd_mkfs(int argc, char **argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
-
+#endif
 extern int df(const char *path);
 int cmd_df(int argc, char** argv)
 {
@@ -376,8 +383,9 @@ int cmd_df(int argc, char** argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
-
+#endif
 int cmd_echo(int argc, char** argv)
 {
     if (argc == 2)
@@ -406,7 +414,8 @@ int cmd_echo(int argc, char** argv)
 
     return 0;
 }
+#ifdef SHELL_TEST
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
-
+#endif
 #endif /* defined(FINSH_USING_MSH) && defined(RT_USING_DFS) */
 
