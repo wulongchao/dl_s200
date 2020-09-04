@@ -86,7 +86,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
+#include "stm32f4xx_hal_iwdg.h"
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
   */

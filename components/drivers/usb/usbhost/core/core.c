@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <drivers/usb_host.h>
-
+#include "board.h"
 static struct uinstance dev[USB_MAX_DEVICE];
 
 /**
@@ -138,7 +138,7 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
     /* alloc true address ep0 pipe*/
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_out, device, &ep0_out_desc);
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_in, device, &ep0_in_desc);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("get device descriptor length %d\n",
+    RT_DEBUG_LOG(1, ("get device descriptor length %d\n",//RT_DEBUG_USB
                                 dev_desc->bLength));
     
     /* get full device descriptor again */
@@ -146,6 +146,9 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
     if(ret != RT_EOK)
     {
         rt_kprintf("get full device descriptor failed\n");
+        bkp_para.boot_to_update_mode=1;//升级后的跳转直接使能电源
+        HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR2,*(u32*)&bkp_para.boot_to_update_mode);
+        rt_hw_cpu_reset();
         return ret;
     }
 

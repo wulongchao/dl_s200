@@ -53,11 +53,13 @@ u8 FTL_Init(void)
            temp=1;
     }
     if(temp) 
-    {   
+    {   F4_status.status=e_updateing;
         printf("format nand flash...\r\n");
         temp=FTL_Format();     //格式化NAND
+        F4_status.status&=~e_updateing;
         if(temp)
         {
+            ECP5_status.err_flag |= err_nand_unwork;
             printf("format failed!\r\n");
             return 2;
         }
@@ -477,10 +479,11 @@ u8 FTL_ReadData(u8 *pBuffer,u32 SectorNo,u16 SectorSize,u32 Count,u32 PageOffset
 
 
             flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs);          //读取数据
-            if(flag==NSTA_ECC1BITERR)                                                   //对于1bit ecc错误,可能为坏块
+retry:   
+      if(flag&NSTA_ECC1BITERR)                                                   //对于1bit ecc错误,可能为坏块
             {
                 flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs);      //重读数据,再次确认
-                if(flag==NSTA_ECC1BITERR)
+                if(flag&NSTA_ECC1BITERR)
                 {
                     FTL_CopyAndWriteToBlock(PhyPageNo,PageOffset,pBuffer,rsecs); //搬运数据
                     flag=FTL_BlockCompare(PhyPageNo/nand_dev.block_pagenum,0XFFFFFFFF);     //全1检查,确认是否为坏块
@@ -496,8 +499,23 @@ u8 FTL_ReadData(u8 *pBuffer,u32 SectorNo,u16 SectorSize,u32 Count,u32 PageOffset
                     }
                     flag=0;
                 }
-            }
-            if(flag==NSTA_ECC2BITERR)flag=0;    //2bit ecc错误,不处理(可能是初次写入数据导致的)
+            }else
+		if(flag&NSTA_ECC2BITERR)
+		{
+			LOG_E("ECC2BITERR RETRY");
+			flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);			//读取数据
+				if(flag&NSTA_ECC2BITERR)
+				{
+				LOG_E("ECC2BITERR");
+				}else if(flag&NSTA_ECC1BITERR)
+				{
+					goto retry;
+				}else
+				{
+				LOG_E("ECC is true");
+				}
+			flag=0;	//2bit ecc错误,不处理(可能是初次写入数据导致的)
+		}
             if(flag)return 2;                   //失败
             pBuffer+=rsecs;          //数据缓冲区指针偏移
             i+=rsecs-1;
@@ -536,10 +554,11 @@ u8 FTL_ReadSectors(u8 *pBuffer,u32 SectorNo,u16 SectorSize,u32 SectorCount)
 		rsecs=(nand_dev.page_mainsize-PageOffset)/SectorSize;						//计算一次最多可以读取多少页
 		if(rsecs>(SectorCount-i))rsecs=SectorCount-i;								//最多不能超过SectorCount-i
 		flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);			//读取数据
-		if(flag==NSTA_ECC1BITERR)													//对于1bit ecc错误,可能为坏块
+retry:		
+		if(flag&NSTA_ECC1BITERR)													//对于1bit ecc错误,可能为坏块
 		{	
 			flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);		//重读数据,再次确认
-			if(flag==NSTA_ECC1BITERR)
+			if(flag&NSTA_ECC1BITERR)
 			{
  				FTL_CopyAndWriteToBlock(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);	//搬运数据 
 				flag=FTL_BlockCompare(PhyPageNo/nand_dev.block_pagenum,0XFFFFFFFF);		//全1检查,确认是否为坏块
@@ -555,8 +574,23 @@ u8 FTL_ReadSectors(u8 *pBuffer,u32 SectorNo,u16 SectorSize,u32 SectorCount)
 				}
 				flag=0;
 			}
+		}else
+		if(flag&NSTA_ECC2BITERR)
+		{
+			LOG_E("ECC2 retry");
+			flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);			//读取数据
+				if(flag&NSTA_ECC2BITERR)
+				{
+				LOG_E("ECC2 Bit err");
+				}else if(flag&NSTA_ECC1BITERR)
+				{
+					goto retry;
+				}else
+				{
+				LOG_E("ECC is true");
+				}
+			flag=0;	//2bit ecc错误,不处理(可能是初次写入数据导致的)
 		}
-		if(flag==NSTA_ECC2BITERR)flag=0;	//2bit ecc错误,不处理(可能是初次写入数据导致的)
 		if(flag)return 2;					//失败
 		pBuffer+=SectorSize*rsecs;			//数据缓冲区指针偏移 
 		i+=rsecs-1;
@@ -573,6 +607,7 @@ u8 FTL_CreateLUT(u8 mode)
     u32 i;
  	u8 buf[4];
     u32 LBNnum=0;								//逻辑块号 
+	//retry:
     for(i=0;i<nand_dev.block_totalnum;i++)		//复位LUT表，初始化为无效值，也就是0XFFFF
     {
         nand_dev.lut[i]=0XFFFF;
@@ -591,9 +626,11 @@ u8 FTL_CreateLUT(u8 mode)
             if(LBNnum<nand_dev.block_totalnum)	//逻辑块号肯定小于总的块数量
             {
                 nand_dev.lut[LBNnum]=i;			//更新LUT表，写LBNnum对应的物理块编号
+							  
+					//		printf("i:%d,index:%d\r\n",i,LBNnum);
             }else {
               //  rt_thread_mdelay(1);
-//               printf("bad  index:%d\r\n",LBNnum);
+              // printf("bad  index:%d\r\n",LBNnum);
             }
 			nand_dev.good_blocknum++;
 		}else
@@ -608,14 +645,19 @@ u8 FTL_CreateLUT(u8 mode)
         if(nand_dev.lut[i]>=nand_dev.block_totalnum)//4096
         {
             nand_dev.valid_blocknum=i;
+//					  LOG_I("valid block num:%d\r\n",nand_dev.valid_blocknum);
+//	goto	retry;
             break;
         }
     }
     if(nand_dev.good_blocknum<1000)
-    {printf("valid block num:%d\r\n",nand_dev.valid_blocknum);
-        ftl_use_bad_serarch_type= 1;return 1;  //有效块数小于100,有问题.需要重新格式化
+    {
+        printf("valid block num:%d\r\n",nand_dev.valid_blocknum);
+        ftl_use_bad_serarch_type= 1;//搜寻坏块.耗时很久
+        return 1;  //有效块数小于100,有问题.需要重新格式化
     }else if(nand_dev.valid_blocknum<3000)
-    {printf("valid block num:%d\r\n",nand_dev.valid_blocknum);
+    {
+        printf("valid block num:%d\r\n",nand_dev.valid_blocknum);
         ftl_use_bad_serarch_type=2;
         return 2;	//有效块数小于100,有问题.需要重新格式化
     }

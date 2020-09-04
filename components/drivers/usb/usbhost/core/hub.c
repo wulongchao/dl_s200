@@ -440,7 +440,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
             /* attatch the usb instance to the hcd */
             if(rt_usbh_attatch_instance(device)!= RT_EOK)
             {
-                rt_kprintf("renumerate usbh\r\n");
+                rt_kprintf("reattatch instance\r\n");
                 rt_usbh_attatch_instance(device);
             }
 //            rt_usbh_attatch_instance(device);

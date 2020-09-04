@@ -16,7 +16,7 @@
  * 2018-07-24     aozima       enhancement hard fault exception handler.
  * 2019-07-03     yangjie      add __rt_ffs() for armclang.
  */
-
+#include "board.h"
 #include <rtthread.h>
 
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
@@ -400,8 +400,8 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
     rt_kprintf("r12: 0x%08x\n", context->exception_stack_frame.r12);
     rt_kprintf(" lr: 0x%08x\n", context->exception_stack_frame.lr);
     rt_kprintf(" pc: 0x%08x\n", context->exception_stack_frame.pc);
-extern char* APP_VERSION;
-   rt_kprintf("- S200 -%s\n",APP_VERSION);
+
+   rt_kprintf("- S200 -%s\n",flash_para.appversion);
     if (exception_info->exc_return & (1 << 2))
     {
         rt_kprintf("hard fault on thread: %s\r\n\r\n", rt_thread_self()->name);

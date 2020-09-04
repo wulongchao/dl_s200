@@ -1,6 +1,6 @@
 #define LOG_TAG "Nand"
+//#define LOG_LVL                DBG_LEVEL
 #include "../mtd/nand.h"
-
 //#include "malloc.h"
 #include "board.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -33,6 +33,7 @@
 //2.擦除时增加ms级别的延时，防止擦除时间不够立马进行读状态而造成出错 
 ////////////////////////////////////////////////////////////////////////////////// 	
 #include "stm32f4xx_ll_fsmc.h"
+#define ECC_DELAY_TIME 10
 u8 ecc_check=1;
 u8 NAND_ReadPageComp(u32 PageNum,u16 ColNum,u32 CmpVal,u16 NumByteToRead,u16 *NumByteEqual);
 NAND_HandleTypeDef NAND_Handler;    //NAND FLASH句柄
@@ -72,7 +73,7 @@ u8 NAND_Init(void)
     NAND_Handler.Init.NandBank=FSMC_NAND_BANK2;                          //NAND挂在BANK3上
     NAND_Handler.Init.Waitfeature=FSMC_NAND_PCC_WAIT_FEATURE_DISABLE;//FMC_NAND_PCC_WAIT_FEATURE_DISABLE;    //关闭等待特性
     NAND_Handler.Init.MemoryDataWidth=FSMC_NAND_PCC_MEM_BUS_WIDTH_8;//FMC_NAND_PCC_MEM_BUS_WIDTH_8;     //8位数据宽度
-    NAND_Handler.Init.EccComputation=FSMC_NAND_ECC_DISABLE;              //不使用ECC
+    NAND_Handler.Init.EccComputation=FSMC_NAND_ECC_ENABLE;//FSMC_NAND_ECC_DISABLE;              //不使用ECC
     NAND_Handler.Init.ECCPageSize=FSMC_NAND_ECC_PAGE_SIZE_2048BYTE;//FMC_NAND_ECC_PAGE_SIZE_2048BYTE;      //ECC页大小为2k
     NAND_Handler.Init.TCLRSetupTime=0;                                  //设置TCLR(tCLR=CLE到RE的延时)=(TCLR+TSET+2)*THCLK,THCLK=1/180M=5.5ns
     NAND_Handler.Init.TARSetupTime=1;                                   //设置TAR(tAR=ALE到RE的延时)=(TAR+TSET+2)*THCLK,THCLK=1/180M=5.5n。   
@@ -90,7 +91,8 @@ u8 NAND_Init(void)
     HAL_NAND_Init(&NAND_Handler,&ComSpaceTiming,&AttSpaceTiming); 
     if(NAND_Reset())
         LOG_I("NAND_RESET ERR");       		        //复位NAND
-    stm32_udelay(100*1000);
+    rt_thread_mdelay(100);
+
 //    delay_ms(100);
 //    NAND_ReadID1();
     nand_dev.id=NAND_ReadID();	        //读取ID
@@ -239,7 +241,7 @@ u8 NAND_WaitRB(vu8 rb)
 { u32 timeout;
     vu32 time=0;  
     if(0==rb)
-        timeout=0xff;
+        timeout=0xfff;
 
     else
         timeout=0X1FFFFF;
@@ -249,7 +251,7 @@ u8 NAND_WaitRB(vu8 rb)
 		if(NAND_RB==rb)
 		{
 
-		/*    if (maxtesttime<time) {
+/*		    if (maxtesttime<time) {
 
                 LOG_I("time%x rb:%x",time,rb);
                 maxtesttime= MAX(maxtesttime,time);
@@ -263,7 +265,7 @@ u8 NAND_WaitRB(vu8 rb)
 	    LOG_I("WaitRB==1 timeout");
 	if(0==rb)
 	{
-//	    LOG_I("WaitRB==0 timeout");
+//	    LOG_I("WaitRB==0");
 	}
 
 	return 1;
@@ -319,20 +321,24 @@ u8 NAND_ReadPage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
 		eccnum=NumByteToRead/NAND_ECC_SECTOR_SIZE;			//得到ecc计算次数
 		eccstart=ColNum/NAND_ECC_SECTOR_SIZE;
 		p=pBuffer;
+		
 		for(res=0;res<eccnum;res++)
 		{
 			FSMC_Bank2_3->PCR2|=1<<6;						//使能ECC校验
+
 			for(i=0;i<NAND_ECC_SECTOR_SIZE;i++)				//读取NAND_ECC_SECTOR_SIZE个数据
 			{
 				*(vu8*)pBuffer++ = *(vu8*)NAND_ADDRESS;
 			}		
-		//	while((FSMC_Bank2_3->SR2&(1<<6)));             //等待FIFO空
 			while(!(FSMC_Bank2_3->SR2&(1<<6)));				//等待FIFO空
+			rt_hw_us_delay(ECC_DELAY_TIME);
+		 //   rt_thread_mdelay(1);
 			nand_dev.ecc_hdbuf[res+eccstart]=FSMC_Bank2_3->ECCR2;//读取硬件计算后的ECC值
 			FSMC_Bank2_3->PCR2&=~(1<<6);						//禁止ECC校验
-		} 
+		}
+		
 		i=nand_dev.page_mainsize+0X10+eccstart*4;			//从spare区的0X10位置开始读取之前存储的ecc值
-		NAND_Delay(NAND_TRHW_DELAY);//等待tRHW 
+
 		*(vu8*)(NAND_ADDRESS|NAND_CMD)=0X05;				//随机读指令
 		//发送地址
 		*(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)i;
@@ -344,23 +350,39 @@ u8 NAND_ReadPage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
 		{
 			*(vu8*)pBuffer++= *(vu8*)NAND_ADDRESS;
 		}
-if (ecc_check==1) {
+if (ecc_check==1)  //随机写不校验ECC
+							{
+					
                         for(i=0;i<eccnum;i++)								//检验ECC
                         {
+											
                             if(nand_dev.ecc_rdbuf[i+eccstart]!=nand_dev.ecc_hdbuf[i+eccstart])//不相等,需要校正
                             {
+								LOG_I("read: rECC val:%x,hECC val:%x",nand_dev.ecc_rdbuf[i+eccstart],nand_dev.ecc_hdbuf[i+eccstart]);
+																					
                 //				printf("err hd,rd:0x%x,0x%x\r\n",nand_dev.ecc_hdbuf[i+eccstart],nand_dev.ecc_rdbuf[i+eccstart]);
                 // 				printf("eccnum,eccstart:%d,%d\r\n",eccnum,eccstart);
                 //				printf("PageNum,ColNum:%d,%d\r\n",PageNum,ColNum);
                                 res=NAND_ECC_Correction(p+NAND_ECC_SECTOR_SIZE*i,nand_dev.ecc_rdbuf[i+eccstart],nand_dev.ecc_hdbuf[i+eccstart]);//ECC校验
-                                if(res)errsta=NSTA_ECC2BITERR;				//标记2BIT及以上ECC错误
-                                else errsta=NSTA_ECC1BITERR;				//标记1BIT ECC错误
+                                if(res)
+																{
+																	errsta|=NSTA_ECC2BITERR;				//标记2BIT及以上ECC错误
+																
+                                }
+																else 
+																	errsta|=NSTA_ECC1BITERR;				//标记1BIT ECC错误
                             }
                         }
                    }
 
 	}
-    if(NAND_WaitForReady()!=NSTA_READY)errsta=NSTA_ERROR;	//失败
+    if(NAND_WaitForReady()!=NSTA_READY)
+		{
+			errsta=NSTA_ERROR;	//失败
+		  rt_kprintf("errsta=NSTA_ERROR\r\n");
+		}
+
+			
     return errsta;	//成功   
 } 
 //读取NAND Flash的指定页指定列的数据(main区和spare区都可以使用此函数),并对比(FTL管理时需要)
@@ -487,13 +509,17 @@ u8 NAND_WritePage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
  		for(res=0;res<eccnum;res++)
 		{
 			FSMC_Bank2_3->PCR2|=1<<6;						//使能ECC校验
+
 			for(i=0;i<NAND_ECC_SECTOR_SIZE;i++)				//写入NAND_ECC_SECTOR_SIZE个数据
 			{
 				*(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
 			}		
 			while(!(FSMC_Bank2_3->SR2&(1<<6)));				//等待FIFO空
+			rt_hw_us_delay(ECC_DELAY_TIME);
+			//rt_thread_mdelay(1);
 			nand_dev.ecc_hdbuf[res+eccstart]=FSMC_Bank2_3->ECCR2;	//读取硬件计算后的ECC值
   			FSMC_Bank2_3->PCR2&=~(1<<6);						//禁止ECC校验
+		
 		}  
 		i=nand_dev.page_mainsize+0X10+eccstart*4;			//计算写入ECC的spare区地址
 		NAND_Delay(NAND_TADL_DELAY);//等待tADL 
@@ -509,7 +535,9 @@ u8 NAND_WritePage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
 			{
 				*(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
 			}
+		//	LOG_I("write:nand_dev.ecc_hdbuf[i+eccstart]:%x",nand_dev.ecc_hdbuf[i+eccstart]);	
 		} 		
+
 	}
 
     *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE_TURE1; 
@@ -606,6 +634,7 @@ u8 NAND_CopyPageWithoutWrite(u32 Source_PageNum,u32 Dest_PageNum)
 //NumByteToWrite:要写入的数据个数
 //返回值:0,成功 
 //    其他,错误代码
+
 u8 NAND_CopyPageWithWrite(u32 Source_PageNum,u32 Dest_PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
 {
 	u8 res=0;
@@ -651,21 +680,29 @@ u8 NAND_CopyPageWithWrite(u32 Source_PageNum,u32 Dest_PageNum,u16 ColNum,u8 *pBu
 		{
 			*(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
 		}
+	//	LOG_I("NumByteToWrite:%d",NumByteToWrite);		
 	}else
 	{
 		eccnum=NumByteToWrite/NAND_ECC_SECTOR_SIZE;			//得到ecc计算次数
 		eccstart=ColNum/NAND_ECC_SECTOR_SIZE; 
+//		rt_enter_critical();
+
  		for(res=0;res<eccnum;res++)
 		{
 			FSMC_Bank2_3->PCR2|=1<<6;						//使能ECC校验
+	
 			for(i=0;i<NAND_ECC_SECTOR_SIZE;i++)				//写入NAND_ECC_SECTOR_SIZE个数据
 			{
 				*(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
 			}		
 			while(!(FSMC_Bank2_3->SR2&(1<<6)));				//等待FIFO空
+			rt_hw_us_delay(ECC_DELAY_TIME);
+			//rt_thread_mdelay(1);
 			nand_dev.ecc_hdbuf[res+eccstart]=FSMC_Bank2_3->ECCR2;	//读取硬件计算后的ECC值
  			FSMC_Bank2_3->PCR2&=~(1<<6);						//禁止ECC校验
 		}  
+		
+//	 rt_exit_critical();	
 		i=nand_dev.page_mainsize+0X10+eccstart*4;			//计算写入ECC的spare区地址
 		NAND_Delay(NAND_TADL_DELAY);//等待tADL 
 		*(vu8*)(NAND_ADDRESS|NAND_CMD)=0X85;				//随机写指令
@@ -680,7 +717,9 @@ u8 NAND_CopyPageWithWrite(u32 Source_PageNum,u32 Dest_PageNum,u16 ColNum,u8 *pBu
 			{
 				*(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
 			}
-		} 		
+		//	LOG_I("write:ecc_hdbuf:%x",nand_dev.ecc_hdbuf[i+eccstart]);		
+		} 	
+		
 	}
     *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_MOVEDATA_CMD3;	//发送命令0X10 
  	delay_us(NAND_TPROG_DELAY);							//等待tPROG
@@ -786,6 +825,7 @@ u8 NAND_ECC_Correction(u8* data_buf,u32 eccrd,u32 ecccl)
 	u16 eccchk=0;
 	u16 errorpos=0; 
 	u32 bytepos=0;  
+	//return 0;//test
 	eccrdo=NAND_ECC_Get_OE(1,eccrd);	//获取eccrd的奇数位
 	eccrde=NAND_ECC_Get_OE(0,eccrd);	//获取eccrd的偶数位
 	eccclo=NAND_ECC_Get_OE(1,ecccl);	//获取ecccl的奇数位
@@ -799,8 +839,7 @@ u8 NAND_ECC_Correction(u8* data_buf,u32 eccrd,u32 ecccl)
 		data_buf[bytepos]^=1<<(errorpos%8);
 	}else				//不是全1,说明至少有2bit ECC错误,无法修复
 	{
-//		printf("2bit ecc error or more\r\n");
-	    printf("\r2bit ecc error or more\r\n");
+	    printf("\r2bit ecc\r\n");
 		return 1;
 	} 
 	return 0;

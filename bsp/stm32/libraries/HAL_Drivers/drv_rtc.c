@@ -32,7 +32,7 @@
 
 static struct rt_device rtc;
 
-static RTC_HandleTypeDef RTC_Handler;
+ RTC_HandleTypeDef RTC_Handler;
 
 static time_t get_rtc_timestamp(void)
 {
@@ -294,8 +294,6 @@ int rt_hw_rtc_init(void)
         LOG_E("rtc register err code: %d", result);
         return result;
     }
-
-
     daback=HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1);
     if(daback!= BKUP_REG_DATA)
        {    char str[16]= {0};
@@ -320,6 +318,6 @@ int rt_hw_rtc_init(void)
     LOG_D("rtc init success");
     return RT_EOK;
 }
-INIT_DEVICE_EXPORT(rt_hw_rtc_init);
-
+//INIT_DEVICE_EXPORT(rt_hw_rtc_init);
+INIT_BOARD_EXPORT(rt_hw_rtc_init);
 #endif /* BSP_USING_ONCHIP_RTC */

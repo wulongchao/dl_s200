@@ -124,11 +124,14 @@ static rt_int32_t stm32_get_scl(void *data)
  */
  void stm32_udelay(rt_uint32_t us)
 {
+#if 1
+    rt_hw_us_delay(us);
+#else
     rt_uint32_t ticks;
     rt_uint32_t told, tnow, tcnt = 0;
     rt_uint32_t reload = SysTick->LOAD;
 
-    ticks = us *21/2;// reload / (1000000 / RT_TICK_PER_SECOND);
+    ticks = us *168/16;// reload / (1000000 / RT_TICK_PER_SECOND);
     told = SysTick->VAL;
     while (1)
     {
@@ -150,6 +153,7 @@ static rt_int32_t stm32_get_scl(void *data)
             }
         }
     }
+#endif
 }
 
 static const struct rt_i2c_bit_ops stm32_bit_ops_default =

@@ -28,7 +28,7 @@
 #ifdef FINSH_USING_MSH
 #include "msh.h"
 #endif
-
+//#define RT_USING_POSIX_1
 #ifdef _WIN32
 #include <stdio.h> /* for putchar */
 #endif
@@ -175,7 +175,6 @@ static int finsh_getchar(void)
     RT_ASSERT(shell != RT_NULL);
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
-
     return (int)ch;
 #endif
 #else

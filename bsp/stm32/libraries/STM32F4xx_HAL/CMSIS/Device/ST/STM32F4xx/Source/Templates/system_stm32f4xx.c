@@ -108,12 +108,12 @@
 /* #define VECT_TAB_SRAM */
 
 
-//#if 1//APP_TYPE==e_BootLoader
-#if APP_TYPE==e_BootLoader
+
+#ifdef APP_TYPE_BOOT
 #define VECT_TAB_OFFSET   0 /*!< Vector Table base offset field. 
                                    This value must be a multiple of 0x200. */
 #else
-    #ifndef APP_DEBUG
+    #ifndef APP_DEBUG_BIN
     #define VECT_TAB_OFFSET   FLASH_APP1_ADDR_OFFSET  //20000  =128k
     #else
     #define VECT_TAB_OFFSET   0

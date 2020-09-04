@@ -536,10 +536,12 @@ char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 void rt_show_version(void)
 {
 
-
+#ifdef  APP_TYPE_BOOT
+    memcpy( flash_para.appversion,"bootloader",sizeof("bootloader"));
+#endif
   //  __disable_irq();
     rt_kprintf("\n \\ | /\n");
-    rt_kprintf("- S200 -%s\n",APP_VERSION);
+    rt_kprintf("- S200 -%s\n",flash_para.appversion);
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__,__TIME__);
 //    rt_kprintf(" 2020 - 2040 Copyright by  team\n");

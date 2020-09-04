@@ -22,17 +22,23 @@
  */
 static rt_err_t _mtd_init(rt_device_t dev)
 {
+	static u8 init=0;
+	if(init==0)
+	{
     if(FTL_Init())               //ºÏ≤‚NAND FLASH,≤¢≥ı ºªØFTL
         {
         LOG_I("nand_check_err");
         return RT_ERROR;
         }else {
+					init=1;
           return RT_EOK;
         }
+	}
+	return RT_EOK;
 //    rt_hw_mtd_nand_init();
 
 }
-//INIT_DEVICE_EXPORT(_mtd_init);
+INIT_DEVICE_EXPORT(_mtd_init);
 static rt_err_t _mtd_open(rt_device_t dev, rt_uint16_t oflag)
 {
     return RT_EOK;
@@ -59,7 +65,7 @@ static rt_size_t _mtd_read(rt_device_t dev,
                             rt_size_t   size)
 {
     u32 LBNNo=pos/(128*1024);
-    u32 BlockNum=size/(128*1024);
+    u32 BlockNum=size/(128*1024);//if size !=128K will be skip
      FTL_EraseBlock(LBNNo,BlockNum);
      return size;
 }

@@ -971,7 +971,7 @@ static sfud_err wait_busy(const sfud_flash *flash) {
     sfud_err result = SFUD_SUCCESS;
     uint8_t status;
     size_t retry_times = flash->retry.times;
-
+    u16 timeout=0;
     SFUD_ASSERT(flash);
 
     while (true) {
@@ -984,6 +984,12 @@ static sfud_err wait_busy(const sfud_flash *flash) {
         }
         /* retry counts */
         SFUD_RETRY_PROCESS(flash->retry.delay, retry_times, result);
+				if(timeout++>1000)
+				{
+					LOG_E("sfud_flash time out:%s ",flash->name);
+					timeout=0;
+				}
+					
     }
 
     if (result != SFUD_SUCCESS || ((status & SFUD_STATUS_REGISTER_BUSY)) != 0) {

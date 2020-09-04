@@ -52,12 +52,19 @@
 //#define NAND_TPROG_DELAY			200			//tPROG等待延迟,典型值200us,最大需要700us
 //#define NAND_TBERS_DELAY			4			//tBERS等待延迟,典型值3.5ms,最大需要10ms
 
-//NAND FLASH操作相关延时函数 *6ns
-#define NAND_TADL_DELAY             80/6          //tADL等待延迟,最少70ns
+
+//#define NAND_TADL_DELAY             80/6          //tADL等待延迟,最少70ns
+//#define NAND_TWHR_DELAY             80/6          //tWHR等待延迟,最少60ns
+//#define NAND_TRHW_DELAY             80/6          //tRHW等待延迟,最少100ns
+//#define NAND_TPROG_DELAY            300         //tPROG等待延迟,典型值200us,最大需要700us
+//#define NAND_TBERS_DELAY            4           //tBERS等待延迟,典型值3.5ms,最大需要10ms
+
+//NAND FLASH操作相关延时函数 NAND_Delay(1)=6ns
+#define NAND_TADL_DELAY             90          //tADL等待延迟,最少70ns
 #define NAND_TWHR_DELAY             80/6          //tWHR等待延迟,最少60ns
-#define NAND_TRHW_DELAY             80/6          //tRHW等待延迟,最少100ns
-#define NAND_TPROG_DELAY            300/6         //tPROG等待延迟,典型值200us,最大需要700us
-#define NAND_TBERS_DELAY            4           //tBERS等待延迟,典型值3.5ms,最大需要10ms
+#define NAND_TRHW_DELAY             80/6          //tRHW等待延迟,最少60ns
+#define NAND_TPROG_DELAY            700         //tPROG等待延迟,典型值300us,最大需要600us
+#define NAND_TBERS_DELAY            4           //tBERS等待延迟,典型值1ms,最大需要3.5ms
 
 //NAND属性结构体
 typedef struct

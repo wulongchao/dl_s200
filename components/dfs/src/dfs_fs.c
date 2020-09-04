@@ -506,8 +506,6 @@ const struct dfs_mount_tbl mount_table[] =
                 {   //filesystemW25Q1282
                     {RT_USB_MSTORAGE_DISK_NAME,U_MOUNTPOINT , "elm", O_RDWR, 0},//  只能初始化为/"/ud0"
                     {RT_USB_MSTORAGE_DISK_NAME_2,U_MOUNTPOINT1 , "elm", O_RDWR, 0},
-                    //       { "nand0_data",U_MOUNTPOINT , "elm", O_RDWR, 0},
-                   //  {"ud0-0", "/", "elm", 0, 0},
                     {0}
                 };
 int dfs_mount_table(void)

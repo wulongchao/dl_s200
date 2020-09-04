@@ -99,10 +99,16 @@ void _Error_Handler(char *s, int num)
  */
 void rt_hw_us_delay(rt_uint32_t us)
 {
+
     rt_uint32_t start, now, delta, reload, us_tick;
     start = SysTick->VAL;
     reload = SysTick->LOAD;
     us_tick = SystemCoreClock / 1000000UL;
+    if (us>1000) {
+        rt_thread_mdelay(us/1000);
+        us%=1000;
+    }
+
     do {
         now = SysTick->VAL;
         delta = start > now ? start - now : reload + start - now;

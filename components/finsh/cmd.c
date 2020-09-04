@@ -59,14 +59,15 @@ FINSH_FUNCTION_EXPORT(clear,clear the terminal screen);
 MSH_CMD_EXPORT(clear,clear the terminal screen);
 
 extern void rt_show_version(void);
+void show_fpga_version(void);
 long version(void)
 {
-    rt_show_version();
-
+//    rt_show_version();
+    show_fpga_version();
     return 0;
 }
-FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
-MSH_CMD_EXPORT(version, show RT-Thread version information);
+FINSH_FUNCTION_EXPORT(version, show version information);
+MSH_CMD_EXPORT(version, show version information);
 
 rt_inline void object_split(int len)
 {

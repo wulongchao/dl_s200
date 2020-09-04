@@ -267,7 +267,7 @@ static int stm32_adc_init(void)
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
             {
-                LOG_D("%s init success", name_buf);
+                LOG_I("%s init success", name_buf);
             }
             else
             {
@@ -279,6 +279,6 @@ static int stm32_adc_init(void)
 
     return result;
 }
-INIT_BOARD_EXPORT(stm32_adc_init);
+INIT_DEVICE_EXPORT(stm32_adc_init);//INIT_BOARD_EXPORT
 
 #endif /* BSP_USING_ADC */
