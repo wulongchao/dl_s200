@@ -82,6 +82,7 @@ void rt_tick_increase(void)
 
     /* check time slice */
     thread = rt_thread_self();
+	
 
     -- thread->remaining_tick;
     if (thread->remaining_tick == 0)
@@ -94,6 +95,7 @@ void rt_tick_increase(void)
         /* yield */
         rt_thread_yield();
     }
+
 
     /* check timer */
     rt_timer_check();

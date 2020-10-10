@@ -47,20 +47,20 @@ u8 FTL_Init(void)
 	nand_dev.lut=rt_malloc((nand_dev.block_totalnum)*2);//rt_malloc(SRAMIN,(nand_dev.block_totalnum)*2); 	//给LUT表申请内存
 	memset(nand_dev.lut,0,nand_dev.block_totalnum*2);			//全部清理
     if(!nand_dev.lut)return 1;				//内存申请失败 
-    temp=FTL_CreateLUT(1);
+    temp=FTL_CreateLUT(1);//2只检测，1擦除检测 耗时
 
     if (FTL_Format_Flag) {
            temp=1;
     }
     if(temp) 
     {   F4_status.status=e_updateing;
-        printf("format nand flash...\r\n");
+        rt_kprintf("start format nand flash...\r\n");
         temp=FTL_Format();     //格式化NAND
         F4_status.status&=~e_updateing;
         if(temp)
         {
             ECP5_status.err_flag |= err_nand_unwork;
-            printf("format failed!\r\n");
+            rt_kprintf("format failed!\r\n");
             return 2;
         }
     }else 	//创建LUT表成功
@@ -502,17 +502,17 @@ retry:
             }else
 		if(flag&NSTA_ECC2BITERR)
 		{
-			LOG_E("ECC2BITERR RETRY");
+			LOG_D("ECC2BITERR RETRY");
 			flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);			//读取数据
 				if(flag&NSTA_ECC2BITERR)
 				{
-				LOG_E("ECC2BITERR");
+				LOG_E("ECC 2Bit ERR");
 				}else if(flag&NSTA_ECC1BITERR)
 				{
 					goto retry;
 				}else
 				{
-				LOG_E("ECC is true");
+				LOG_D("ECC is true");
 				}
 			flag=0;	//2bit ecc错误,不处理(可能是初次写入数据导致的)
 		}
@@ -577,7 +577,7 @@ retry:
 		}else
 		if(flag&NSTA_ECC2BITERR)
 		{
-			LOG_E("ECC2 retry");
+		//	LOG_E("ECC2 retry");
 			flag=NAND_ReadPage(PhyPageNo,PageOffset,pBuffer,rsecs*SectorSize);			//读取数据
 				if(flag&NSTA_ECC2BITERR)
 				{
@@ -587,7 +587,7 @@ retry:
 					goto retry;
 				}else
 				{
-				LOG_E("ECC is true");
+			//	LOG_E("ECC is true");
 				}
 			flag=0;	//2bit ecc错误,不处理(可能是初次写入数据导致的)
 		}
@@ -771,18 +771,18 @@ else
 			temp=NAND_EraseBlock(i);
 			if(temp)						//擦除失败,认为坏块
 			{
-				printf("Bad block:%d\r\n",i);
+			    rt_kprintf("Bad block:%d\r\n",i);
 				FTL_BadBlockMark(i);		//标记是坏块
 			}else nand_dev.good_blocknum++;	//好块数量加一 
 		}
 
-            printf("\r%d",i);
+           rt_kprintf("\r%d",i);
 
 
 	} 
 }
 
-    printf("good_blocknum:%d\r\n",nand_dev.good_blocknum); 
+	rt_kprintf("good_blocknum:%d\r\n",nand_dev.good_blocknum);
     if(nand_dev.good_blocknum<100) return 1;	//如果好块的数量少于100，则NAND Flash报废   
     goodblock=(nand_dev.good_blocknum*93)/100;	//%93的好块用于存储数据  
     n=0;										

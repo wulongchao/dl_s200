@@ -279,6 +279,6 @@ static int stm32_adc_init(void)
 
     return result;
 }
-INIT_DEVICE_EXPORT(stm32_adc_init);//INIT_BOARD_EXPORT
+INIT_BOARD_EXPORT(stm32_adc_init);//INIT_DEVICE_EXPORT
 
 #endif /* BSP_USING_ADC */

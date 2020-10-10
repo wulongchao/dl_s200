@@ -2191,21 +2191,24 @@ static void rt_usbd_thread_entry(void* parameter)
         case USB_MSG_SETUP_NOTIFY:
 
             _setup_request(device, &msg.content.setup);
-           // LOG_I("charge\r\n\n");
+				    if(F4_status.conmuter_connected==0)
+						{
+            LOG_W("conmuter_connected");
             F4_status.conmuter_connected=1;//¡¨USB
+							rt_event_send(&event_main,EVENT_USBD_Reset);
+						}
             break;
         case USB_MSG_EP0_OUT:
             _ep0_out_notify(device, &msg.content.ep_msg);
             break;
         case USB_MSG_RESET:
          //   rt_pm_run_enter(PM_RUN_MODE_HIGH_SPEED);
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("MSG reset ,device->state=%d\n", device->state));
+            RT_DEBUG_LOG(1, ("MSG reset ,device->state=%d\n", device->state));//RT_DEBUG_USB
             if (device->state == USB_STATE_ADDRESS || device->state == USB_STATE_CONFIGURED)
                 _stop_notify(device);
             device->state = USB_STATE_NOTATTACHED;
-            LOG_I("USB_MSG_RESET\r\n");
-            F4_status.conmuter_connected=0;
-            rt_event_send(&event_main,EVENT_USBD_Reset);//usb≤Â»Î
+//            LOG_I("USB_MSG_RESET\r\n");
+           // rt_event_send(&event_main,EVENT_USBD_Reset);//usb≤Â»Î
             break;
         case USB_MSG_PLUG_IN:
 

@@ -520,7 +520,15 @@ sfud_flash_t rt_sfud_flash_find_by_dev_name(const char *flash_dev_name)
 
     rtt_dev = (rt_spi_flash_device_t) rt_device_find(flash_dev_name);
     if (rtt_dev == RT_NULL || rtt_dev->flash_device.type != RT_Device_Class_Block) {
-        rt_kprintf("ERROR: Flash device %s not found!\n", flash_dev_name);
+			if(strcmp(flash_dev_name,"ios_flash"))       
+			{
+				rt_kprintf("ERROR: Flash device %s not found!\n", flash_dev_name);
+			}
+				else if(ECP5_status.ecp5_enable)
+			{
+				rt_kprintf("ERROR: Flash device %s not found!\n", flash_dev_name);
+			}
+			
         goto __error;
     }
 

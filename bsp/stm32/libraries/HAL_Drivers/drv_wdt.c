@@ -72,7 +72,7 @@ static int iwdg_sample(int argc, char *argv[])
         return RT_ERROR;
     }
     /* 设置空闲线程回调函数 */
-    rt_thread_idle_sethook(wdt_idle_hook);
+    //rt_thread_idle_sethook(wdt_idle_hook);
 
     return ret;
 }

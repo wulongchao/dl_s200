@@ -358,6 +358,7 @@ void HAL_WWDG_IRQHandler(WWDG_HandleTypeDef *hwwdg)
     /* Check if WWDG Early Wakeup Interrupt occurred */
     if (__HAL_WWDG_GET_FLAG(hwwdg, WWDG_FLAG_EWIF) != RESET)
     {
+			rt_kprintf("wdg handler\r\n");
       /* Clear the WWDG Early Wakeup flag */
       __HAL_WWDG_CLEAR_FLAG(hwwdg, WWDG_FLAG_EWIF);
 

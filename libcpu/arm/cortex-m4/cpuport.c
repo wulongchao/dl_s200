@@ -400,8 +400,12 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
     rt_kprintf("r12: 0x%08x\n", context->exception_stack_frame.r12);
     rt_kprintf(" lr: 0x%08x\n", context->exception_stack_frame.lr);
     rt_kprintf(" pc: 0x%08x\n", context->exception_stack_frame.pc);
+#ifdef  APP_TYPE_BOOT
+    rt_kprintf("- boot mode -%s\n",flash_para.appversion);
+#else
+    rt_kprintf("- app mode -%s\n",flash_para.appversion);
+#endif
 
-   rt_kprintf("- S200 -%s\n",flash_para.appversion);
     if (exception_info->exc_return & (1 << 2))
     {
         rt_kprintf("hard fault on thread: %s\r\n\r\n", rt_thread_self()->name);
@@ -443,7 +447,9 @@ void rt_hw_cpu_shutdown(void)
  */
 RT_WEAK void rt_hw_cpu_reset(void)
 {
+	rt_kprintf("reboot...\n");
     SCB_AIRCR = SCB_RESET_VALUE;
+	rt_kprintf("reboot failed...\n");
 }
 
 #ifdef RT_USING_CPU_FFS

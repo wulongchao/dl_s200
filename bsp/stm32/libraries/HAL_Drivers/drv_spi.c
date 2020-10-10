@@ -265,6 +265,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
+	  u16 timeout=0;
     HAL_StatusTypeDef state;
     rt_size_t message_length, already_send_length;
     rt_uint16_t send_length;
@@ -363,7 +364,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         /* For simplicity reasons, this example is just waiting till the end of the
            transfer, but application may perform other tasks while transfer operation
            is ongoing. */
-        while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY)
+				{
+					if(timeout++==0xfffe)
+					{
+						LOG_E("HAL_SPI_GetState timeout");
+						message->length = 0;
+					//	break;
+					}
+				}
     }
 
     if (message->cs_release)

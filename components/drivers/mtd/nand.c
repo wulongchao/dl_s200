@@ -3,6 +3,8 @@
 #include "../mtd/nand.h"
 //#include "malloc.h"
 #include "board.h"
+
+#include "test_board.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32开发板
@@ -114,10 +116,13 @@ u8 NAND_Init(void)
         nand_dev.block_pagenum=64;		//nand一个block所包含的page数目
         nand_dev.plane_blocknum=2048;	//nand一个plane所包含的block数目
         nand_dev.block_totalnum=4096; 	//nand的总block数目
-        LOG_I("nand_id:%x",nand_dev.id);
+        //LOG_I("nand_id:%x",nand_dev.id);
+    }else{
+        stru_test_status.nand_ok=0;
+        LOG_I("err nand_id:%x",nand_dev.id);
+        return 0;	//错误，返回1
     }
-
-  //      return 1;	//错误，返回
+    stru_test_status.nand_ok=1;
     return 0;
 }
 //INIT_BOARD_EXPORT(NAND_Init);
@@ -839,7 +844,7 @@ u8 NAND_ECC_Correction(u8* data_buf,u32 eccrd,u32 ecccl)
 		data_buf[bytepos]^=1<<(errorpos%8);
 	}else				//不是全1,说明至少有2bit ECC错误,无法修复
 	{
-	    printf("\r2bit ecc\r\n");
+	    //printf("\r2bit ecc\r\n");
 		return 1;
 	} 
 	return 0;

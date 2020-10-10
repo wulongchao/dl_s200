@@ -236,7 +236,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 {
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    u16 timeout;
+    u32 timeout=0;
     uart = rt_container_of(serial, struct stm32_uart, serial);
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
@@ -246,9 +246,12 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 #else
     uart->handle.Instance->DR = c;
 #endif
-    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET);
-//		if	(timeout++>0xfff)
-//			break;
+    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET)//Transmission complete
+    {
+        if	(timeout++>0xffff)
+            break;
+    }
+
     return 1;
 }
 

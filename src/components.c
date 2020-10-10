@@ -93,9 +93,9 @@ void rt_components_board_init(void)
     }
 #else
     volatile const init_fn_t *fn_ptr;
-
     for (fn_ptr = &__rt_init_rti_board_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)
-    {
+    { 
+
         (*fn_ptr)();
     }
 #endif
@@ -123,7 +123,7 @@ char i=0;
     for (fn_ptr = &__rt_init_rti_board_end; fn_ptr < &__rt_init_rti_end; fn_ptr ++)
     {
         (*fn_ptr)();
-      //  LOG_I("rt init i:%x",i++);
+       // LOG_I("rt_components_init i:%x",i++);
     }
 #endif
 }

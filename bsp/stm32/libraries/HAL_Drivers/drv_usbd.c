@@ -306,6 +306,8 @@ const static struct rt_device_ops _ops =
 
 int stm_usbd_register(void)
 {
+//	while(1);
+		
     rt_memset((void *)&_stm_udc, 0, sizeof(struct udcd));
     _stm_udc.parent.type = RT_Device_Class_USBDevice;
 #ifdef RT_USING_DEVICE_OPS
@@ -325,7 +327,17 @@ int stm_usbd_register(void)
 #endif
     rt_device_register((rt_device_t)&_stm_udc, "usbd", 0);
     rt_usb_device_init();//USBºËÐÄ²ãÄÚÈÝ
+
+	LOG_I("usbd init");
+	
+//#ifdef  APP_TYPE_BOOT
+//    fast_charge_en(1);//test usb device
+//#endif
     return RT_EOK;
 }
-INIT_DEVICE_EXPORT(stm_usbd_register);
+//#ifndef  0//APP_TYPE_BOOT
+#if 1
+INIT_COMPONENT_EXPORT(stm_usbd_register);
+#endif
+
 #endif

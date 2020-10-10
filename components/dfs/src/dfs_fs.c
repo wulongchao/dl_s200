@@ -545,11 +545,8 @@ int dfs_mount_table(void)
                                                  mount_table[index].path);
                                       return -RT_ERROR;
                                   }
-
                        }
-
         }
-
         index ++;
     }
     return 0;

@@ -411,7 +411,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
                     usbdisk_cannot_mount_flag=1;
                     ECP5_status.err_flag|=err_usbdisk_cannot_mount;
                     led_name_b_r_onoff(1, "¿ª¹Ø", 0, 1); //¿ØµÆ×´Ì¬
-                    power_vbs_en(0);
+                    irq_vbs_en(0);
                     rt_kprintf("Mount FAT on Udisk failed.\n");
                 }
             }

@@ -1140,7 +1140,7 @@ rt_device_t rt_console_set_device(const char *name)
         }
 
         /* set new console device */
-        rt_device_open(new_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        rt_device_open(new_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);//
         _console_device = new_device;
 
     }
@@ -1376,7 +1376,8 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 #endif
         {
             rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
-           //return;
+            LOG_E("err");
+            //return;
            // msh_exec("reboot", strlen("reboot"));
 //            return;
             rt_hw_cpu_reset();

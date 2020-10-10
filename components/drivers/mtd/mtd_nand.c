@@ -38,6 +38,7 @@ static rt_err_t _mtd_init(rt_device_t dev)
 //    rt_hw_mtd_nand_init();
 
 }
+//INIT_COMPONENT_EXPORT(_mtd_init);
 INIT_DEVICE_EXPORT(_mtd_init);
 static rt_err_t _mtd_open(rt_device_t dev, rt_uint16_t oflag)
 {
