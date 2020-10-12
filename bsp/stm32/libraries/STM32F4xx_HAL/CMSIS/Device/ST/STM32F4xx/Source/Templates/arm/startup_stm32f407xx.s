@@ -235,9 +235,21 @@ SysTick_Handler PROC
                 B       .
                 ENDP
 
+WWDG_IRQHandler PROC
+                EXPORT  WWDG_IRQHandler            [WEAK]
+                B       .
+                ENDP
+
+
+
+
+
+
+
+
 Default_Handler PROC
 
-                EXPORT  WWDG_IRQHandler                   [WEAK]                                        
+                ;EXPORT  WWDG_IRQHandler                   [WEAK]                                        
                 EXPORT  PVD_IRQHandler                    [WEAK]                      
                 EXPORT  TAMP_STAMP_IRQHandler             [WEAK]         
                 EXPORT  RTC_WKUP_IRQHandler               [WEAK]                     
@@ -319,7 +331,7 @@ Default_Handler PROC
                 EXPORT  HASH_RNG_IRQHandler               [WEAK]
                 EXPORT  FPU_IRQHandler                    [WEAK]
                 
-WWDG_IRQHandler                                                       
+;WWDG_IRQHandler                                                       
 PVD_IRQHandler                                      
 TAMP_STAMP_IRQHandler                  
 RTC_WKUP_IRQHandler                                

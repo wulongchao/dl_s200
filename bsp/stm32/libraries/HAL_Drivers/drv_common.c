@@ -133,13 +133,13 @@ RT_WEAK void rt_hw_board_init()
 
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
-
+	
     /* enable interrupt */
-    __set_PRIMASK(0);
+  //  __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
     /* disable interrupt */
-    __set_PRIMASK(1);
+   // __set_PRIMASK(1);
 
     rt_hw_systick_init();
 
@@ -147,8 +147,6 @@ RT_WEAK void rt_hw_board_init()
 #if defined(RT_USING_HEAP)
     rt_memheap_init(&system_ram_heap, "ram0", (void *)0x10000000, 64*1024);
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
-
-
 #endif
 
     /* Pin driver initialization is open by default */
@@ -170,5 +168,6 @@ RT_WEAK void rt_hw_board_init()
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
 }
 

@@ -91,6 +91,7 @@ void rt_components_board_init(void)
         result = desc->fn();
         rt_kprintf(":%d done\n", result);
     }
+		//rt_kprintf("rt_components_board_init over\n");
 #else
     volatile const init_fn_t *fn_ptr;
     for (fn_ptr = &__rt_init_rti_board_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)

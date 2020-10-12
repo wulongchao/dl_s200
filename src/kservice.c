@@ -538,6 +538,11 @@ void rt_show_version(void)
 
 #ifdef  APP_TYPE_BOOT
     memcpy( flash_para.appversion,"bootloader",sizeof("bootloader"));
+#else
+    if (strlen(flash_para.appversion)==0) {
+       memcpy( flash_para.appversion,"app",sizeof("app"));
+    }
+
 #endif
   //  __disable_irq();
     rt_kprintf("\n \\ | /\n");
