@@ -363,7 +363,7 @@ if (ecc_check==1)  //随机写不校验ECC
 											
                             if(nand_dev.ecc_rdbuf[i+eccstart]!=nand_dev.ecc_hdbuf[i+eccstart])//不相等,需要校正
                             {
-								LOG_I("read: rECC val:%x,hECC val:%x",nand_dev.ecc_rdbuf[i+eccstart],nand_dev.ecc_hdbuf[i+eccstart]);
+								LOG_D("read: rECC val:%x,hECC val:%x",nand_dev.ecc_rdbuf[i+eccstart],nand_dev.ecc_hdbuf[i+eccstart]);
 																					
                 //				printf("err hd,rd:0x%x,0x%x\r\n",nand_dev.ecc_hdbuf[i+eccstart],nand_dev.ecc_rdbuf[i+eccstart]);
                 // 				printf("eccnum,eccstart:%d,%d\r\n",eccnum,eccstart);

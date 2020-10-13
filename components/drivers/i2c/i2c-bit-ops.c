@@ -12,7 +12,7 @@
 
 #define DBG_TAG               "I2C"
 #ifdef  RT_I2C_BITOPS_DEBUG
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL               LOG_LVL_DBG//DBG_LOG
 #else
 #define DBG_LVL               DBG_INFO
 #endif

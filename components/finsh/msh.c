@@ -433,7 +433,7 @@ int msh_exec(char *cmd, rt_size_t length)
         *tcmd = '\0';
     }
     // rt_kprintf("%s: command not found.\n", cmd);
-    rt_kprintf("\r\nData check failed and please resend data.\r\n");
+    rt_kprintf("\r\nData check failed and please resend data,string length=%d.\r\n",length);
     return -1;
 }
 

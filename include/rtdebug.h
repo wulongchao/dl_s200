@@ -68,7 +68,7 @@
 #endif
 
 #ifndef RT_DEBUG_INIT
-#define RT_DEBUG_INIT                  1
+#define RT_DEBUG_INIT                  0
 #endif
 
 /* Turn on this to enable context check */
