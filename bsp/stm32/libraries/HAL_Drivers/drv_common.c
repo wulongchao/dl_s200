@@ -86,8 +86,11 @@ void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
+    err_led_gpio_init();
     while(1)
     {
+
+       // led_name_b_r_onoff(1, "¿ª¹Ø", 0, 1); //¿ØµÆ×´Ì¬
     }
     /* USER CODE END Error_Handler */
 }

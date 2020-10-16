@@ -67,7 +67,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
+#include "board.h"
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
   */
@@ -218,10 +218,16 @@ __weak HAL_StatusTypeDef HAL_RCC_DeInit(void)
   *         first and then HSE On or HSE Bypass.
   * @retval HAL status
   */
+
+unsigned long int test_hse_init_tick=0;
+unsigned long int test_lse_init_tick=0;
+char lse_timeout=0;
+//unsigned long int lse_err=0;
+extern  rt_tick_t rt_tick ;
 __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 {
   uint32_t tickstart;
-
+  uint32_t tickcal;
   /* Check Null pointer */
   if(RCC_OscInitStruct == NULL)
   {
@@ -257,12 +263,14 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
 
         /* Wait till HSE is ready */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) == RESET)
-        {
-          if((HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
+        {rt_tick++;
+          if((test_hse_init_tick=(HAL_GetTick() - tickstart )) > HSE_TIMEOUT_VALUE)
           {
+
             return HAL_TIMEOUT;
           }
         }
+        rt_tick=0;
       }
       else
       {
@@ -280,6 +288,9 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
       }
     }
   }
+#ifdef TEST_PWR_ON_LED
+   err_led_gpio_init();
+#endif
   /*----------------------------- HSI Configuration --------------------------*/
   if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI) == RCC_OSCILLATORTYPE_HSI)
   {
@@ -412,14 +423,17 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
       tickstart = HAL_GetTick();
 
       while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
-      {
-        if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
+      {rt_tick++;
+        if((test_lse_init_tick=(HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE))
         {
+            lse_timeout=1;
           return HAL_TIMEOUT;
         }
       }
     }
 
+
+    rt_tick=0;
     /* Set the new LSE configuration -----------------------------------------*/
     __HAL_RCC_LSE_CONFIG(RCC_OscInitStruct->LSEState);
     /* Check the LSE State */
@@ -430,9 +444,10 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
 
       /* Wait till LSE is ready */
       while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
+      {rt_tick++;
+        if((test_lse_init_tick=(HAL_GetTick() - tickstart )) > RCC_LSE_TIMEOUT_VALUE)
         {
+            lse_timeout=1;
           return HAL_TIMEOUT;
         }
       }
@@ -444,14 +459,15 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
 
       /* Wait till LSE is ready */
       while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) != RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
+      {rt_tick++;
+        if((test_lse_init_tick=(HAL_GetTick() - tickstart )) > RCC_LSE_TIMEOUT_VALUE)
         {
+            lse_timeout=1;
           return HAL_TIMEOUT;
         }
       }
     }
-
+    rt_tick=0;
     /* Restore clock configuration if changed */
     if(pwrclkchanged == SET)
     {

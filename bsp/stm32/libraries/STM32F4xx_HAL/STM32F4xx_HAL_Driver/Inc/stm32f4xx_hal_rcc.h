@@ -1332,11 +1332,11 @@ void HAL_RCC_CSSCallback(void);
 /* BDCR register base address */
 #define RCC_BDCR_BYTE0_ADDRESS     (PERIPH_BASE + RCC_BDCR_OFFSET)
 
-#define RCC_DBP_TIMEOUT_VALUE      2U
-#define RCC_LSE_TIMEOUT_VALUE      LSE_STARTUP_TIMEOUT
+#define RCC_DBP_TIMEOUT_VALUE      168*1000*1000//1000//2U
+#define RCC_LSE_TIMEOUT_VALUE      168*1000*1000//LSE_STARTUP_TIMEOUT
 
 #define HSE_TIMEOUT_VALUE          HSE_STARTUP_TIMEOUT
-#define HSI_TIMEOUT_VALUE          2U  /* 2 ms */
+#define HSI_TIMEOUT_VALUE          2000// 2U  /* 2 ms */
 #define LSI_TIMEOUT_VALUE          2U  /* 2 ms */
 #define CLOCKSWITCH_TIMEOUT_VALUE  5000U /* 5 s */
 

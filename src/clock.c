@@ -21,7 +21,8 @@
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
-static rt_tick_t rt_tick = 0;
+//static rt_tick_t rt_tick = 0;
+ rt_tick_t rt_tick = 0;
 #endif
 
 /**
