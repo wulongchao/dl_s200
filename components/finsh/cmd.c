@@ -34,7 +34,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
+#include "test_board.h"
 #ifdef RT_USING_FINSH
 
 #include "finsh.h"
@@ -64,7 +64,7 @@ long version(void)
 {
 //    rt_show_version();
     show_fpga_version();
-
+ log_key_tick();
 	
     return 0;
 }
