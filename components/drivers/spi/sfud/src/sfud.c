@@ -986,14 +986,17 @@ static sfud_err wait_busy(const sfud_flash *flash) {
         SFUD_RETRY_PROCESS(flash->retry.delay, retry_times, result);
 				if(timeout++>1000)
 				{
-					LOG_E("sfud_flash time out:%s ",flash->name);
+				//	LOG_E("sfud_flash time out:%s ",flash->name);
 					timeout=0;
+					 result = SFUD_SUCCESS;
+					break;
+					//wdt_idle_hook();
 				}
-					
     }
 
     if (result != SFUD_SUCCESS || ((status & SFUD_STATUS_REGISTER_BUSY)) != 0) {
-        SFUD_INFO("Error: Flash wait busy has an error.");
+      SFUD_INFO("Error: %s ",flash->name);  
+			SFUD_INFO("Error: Flash wait busy has an error.");
     }
 
     return result;

@@ -565,7 +565,6 @@ void finsh_thread_entry(void *parameter)
                 shell->stat = WAIT_FUNC_KEY;
                 continue;
             }
-
             shell->stat = WAIT_NORMAL;
         }
         else if (shell->stat == WAIT_FUNC_KEY)
@@ -645,12 +644,10 @@ void finsh_thread_entry(void *parameter)
             /* move the cursor to the beginning of line */
             for (i = 0; i < shell->line_curpos; i++)
                 rt_kprintf("\b");
-
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
             /* re-calculate position */
             shell->line_curpos = shell->line_position = strlen(shell->line);
-
             continue;
         }
         /* handle backspace key */

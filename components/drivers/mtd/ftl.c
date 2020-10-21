@@ -39,8 +39,10 @@ u8 FTL_Format_Flag=0;//默认开启格式化
 //FTL层初始化
 //返回值:0,正常
 //    其他,失败
+
 u8 FTL_Init(void)
 {
+	u8 updata_flag=0;
     u8 temp;
     if(NAND_Init())return 1;									//初始化NAND FLASH
 	if(nand_dev.lut)rt_free(nand_dev.lut);//(SRAMIN,nand_dev.lut);
@@ -53,10 +55,17 @@ u8 FTL_Init(void)
            temp=1;
     }
     if(temp) 
-    {   F4_status.status=e_updateing;
+    {   
+			if(F4_status.status&e_updateing)
+				updata_flag=1;
+			F4_status.status=e_updateing;
         rt_kprintf("start format nand flash...\r\n");
         temp=FTL_Format();     //格式化NAND
+			if(updata_flag==0)
+			{
         F4_status.status&=~e_updateing;
+				led_name_b_r_onoff(1, "升级", 0, 0);
+			}
         if(temp)
         {
             ECP5_status.err_flag |= err_nand_unwork;
