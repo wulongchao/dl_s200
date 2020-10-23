@@ -25,7 +25,7 @@
 
 rt_inline void i2c_delay(struct rt_i2c_bit_ops *ops)
 {
-    ops->udelay((ops->delay_us + 1) >> 1);
+    ops->udelay((ops->delay_us + 1) >> 1);// /2
 }
 
 rt_inline void i2c_delay2(struct rt_i2c_bit_ops *ops)

@@ -64,8 +64,9 @@ long version(void)
 {
 //    rt_show_version();
     show_fpga_version();
- log_key_tick();
-	
+#ifndef  APP_TYPE_BOOT
+    log_key_tick();
+#endif
     return 0;
 }
 FINSH_FUNCTION_EXPORT(version, show version information);

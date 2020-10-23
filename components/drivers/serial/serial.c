@@ -1173,6 +1173,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             int ch = -1;
             rt_base_t level;
             struct rt_serial_rx_fifo* rx_fifo;
+#ifdef           RT_USB_DEVICE_CDC
 //            ///
             if (serial->serial_rx == RT_NULL) {
                 serial->serial_rx=rt_malloc(sizeof(struct rt_serial_rx_fifo));//
@@ -1180,6 +1181,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 								rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
 								rx_fifo->buffer=rt_malloc(RT_CDC_RX_BUFSIZE);
             }
+#endif
+
 //            //
             /* interrupt mode receive */
             rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
@@ -1192,8 +1195,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             {
                 ch = serial->ops->getc(serial);
                 if (ch == -1) break;
-								if(RT_CDC_RX_BUFSIZE)
 
+			//	if(RT_CDC_RX_BUFSIZE)
                 /* disable interrupt */
                 level = rt_hw_interrupt_disable();
 

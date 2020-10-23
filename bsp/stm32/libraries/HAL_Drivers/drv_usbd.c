@@ -38,15 +38,19 @@ static struct ep_id _ep_pool[] =
     {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},//USB_EP_ATTR_INT //
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x3,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},//uart
+    {0x3,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x3,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},//uart
 #if !defined(SOC_SERIES_STM32F1)
     {0x2,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
 #endif
 
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
+
+
+
+
 
 //extern HCD_HandleTypeDef stm32_hhcd_fs;
 
